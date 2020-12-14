@@ -19,6 +19,10 @@ class App extends React.Component {
   }
 
   switchActiveTab = (activeTab) => {
+    if (activeTab === 6) {
+      this.setState({ active: 2, isUserLoggedIn: false, userId: "" })
+
+    }
     this.setState({ active: activeTab });
   }
 
