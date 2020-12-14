@@ -1,6 +1,6 @@
 export const API_URL = "http://127.0.0.1:8000/"
 
-export const MENU_OPTIONS = [{ "id": 1, "name": "Status" }, { "id": 2, "name": "Email Listing" }, { "id": 3, "name": "Organizations" }, { "id": 4, "name": "Analytics" }, { "id": 5, "name": "Logout" }]
+export const MENU_OPTIONS = [{ "id": 1, "name": "Status" }, { "id": 2, "name": "Email Listing" }, { "id": 3, "name": "Profile" }, { "id": 4, "name": "Analytics" }, { "id": 5, "name": "Resend" }, { "id": 6, "name": "Logout" }]
 
 export const TEMPLATE_VIEW = [{
     "id": 1,

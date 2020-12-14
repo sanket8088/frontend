@@ -25,7 +25,9 @@ class HomePage extends React.Component {
         footer: "",
         name: "",
         date: "",
-        attachment: null
+        organization: "",
+        attachment: null,
+        userRecords: []
 
     };
 
@@ -81,13 +83,13 @@ class HomePage extends React.Component {
         //return result; //JavaScript object
         return result; //JSON
     }
-    sendMail(id, amount, name, date) {
+    sendMail(id, amount, name, date, organization) {
         if (this.state.templateId == "1") {
             let heading = TEMPLATE_VIEW[0]["heading"]
             let instructions = TEMPLATE_VIEW[0]["instructions"]
             let message = `Please Confirm the Credit balance as of Rs. ${amount}  as on ${date} carefully and either confirm its correctness, or report any differences directly to our auditors,(Firm & Local Address), who are performing an audit of our financial statements.`
             let footer = TEMPLATE_VIEW[0]["footer"]
-            this.setState({ showTemplate: true, email: id, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
+            this.setState({ showTemplate: true, email: id, organization: organization, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
         }
 
         if (this.state.templateId == "2") {
@@ -95,7 +97,7 @@ class HomePage extends React.Component {
             let instructions = TEMPLATE_VIEW[1]["instructions"]
             let message = `Please Confirm the Credit balance as of Rs. ${amount}  as on ${date} carefully and either confirm its correctness, or report any differences directly to our auditors,(Firm & Local Address), who are performing an audit of our financial statements.`
             let footer = TEMPLATE_VIEW[1]["footer"]
-            this.setState({ showTemplate: true, email: id, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
+            this.setState({ showTemplate: true, email: id, organization: organization, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
         }
 
         if (this.state.templateId == "3") {
@@ -103,7 +105,7 @@ class HomePage extends React.Component {
             let instructions = TEMPLATE_VIEW[2]["instructions"]
             let message = `In connection with the audit of our financial statements, please provide directly to auditors, (Firm & Local Address), the following information with regard to our deposits / Investments held by you as of ${date}`
             let footer = `A complete list of all deposits / investments owned by us which are in your custody as of ${date}`
-            this.setState({ showTemplate: true, email: id, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
+            this.setState({ showTemplate: true, email: id, organization: organization, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
         }
 
         if (this.state.templateId == "4") {
@@ -111,7 +113,7 @@ class HomePage extends React.Component {
             let instructions = TEMPLATE_VIEW[3]["instructions"]
             let message = `In connection with the audit of our financial statements, please provide directly to auditors, (Firm & Local Address), the following information with regard to our deposits / Investments held by you as of ${date}`
             let footer = `A complete list of all deposits / investments owned by us which are in your custody as of ${date}`
-            this.setState({ showTemplate: true, email: id, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
+            this.setState({ showTemplate: true, email: id, organization: organization, name: name, amount: amount, date: date, heading: heading, instructions: instructions, message: message, footer: footer })
         }
 
 
@@ -154,6 +156,9 @@ class HomePage extends React.Component {
         data.append('footer', this.state.footer);
         data.append('templateId', this.state.templateId);
         data.append('email', this.state.email);
+        data.append('amount', this.state.amount);
+        data.append('organization', this.state.organization);
+        data.append('name', this.state.name);
         data.append('userId', this.props.userId);
         data.append('attachment', this.state.attachment);
 
@@ -162,7 +167,7 @@ class HomePage extends React.Component {
             url: url,
             data: data
         }).then(response => {
-            if (response.data.status == 200) {
+            if (response.data.status === 200) {
                 this.setState({ showTemplate: false, })
 
             }
@@ -182,30 +187,23 @@ class HomePage extends React.Component {
         this.setState({ attachment: file })
     }
 
+    componentDidMount() {
+        let url = `${API_URL}api/excel/allResponse/${this.props.userId}`
+        axios.get(url)
+            .then(res => {
+                this.setState({ userRecords: res.data })
+            })
+
+    }
+
 
     render() {
         return (
             <div>
-                {this.state.showTemplate ? <div className={classes.EditorContainer}>
-                    <div className={classes.EmailFormData}>
-                        {(this.state.templateId == 1) ? <div className={classes.FirstTemplate}>
-                            <form className={classes.Login} onSubmit={this.handleMailSubmit}>
-                                <h2>HEADER</h2>
-                                <textarea className={classes.FormInput} type="name" name="heading" value={this.state.heading} onInput={(e) => this.handleInputChanges(e, "heading")} required />
-                                <h2>INSTRUCTIONS</h2>
-                                <textarea className={classes.FormInput} type="name" name="instructions" value={this.state.instructions} onInput={(e) => this.handleInputChanges(e, "instructions")} required />
-                                <h2>ATTENTION</h2>
-                                <textarea className={classes.FormInput} type="name" name="attention" value={this.state.attention} onInput={(e) => this.handleInputChanges(e, "attention")} required />
-                                <h2>MESSAGE</h2>
-                                <textarea className={classes.FormInput} type="name" name="message" value={this.state.message} onInput={(e) => this.handleInputChanges(e, "message")} required />
-                                <h2>FOOTER</h2>
-
-                                <textarea className={classes.FormInput} type="name" name="footer" value={this.state.footer} onInput={(e) => this.handleInputChanges(e, "footer")} required />
-
-                                <input className={classes.FormSubmit} type="submit" value="Submit" />
-                            </form>
-                        </div> :
-                            (this.state.templateId == 2) ? <div className={classes.FirstTemplate}>
+                <div>
+                    {this.state.showTemplate ? <div className={classes.EditorContainer}>
+                        <div className={classes.EmailFormData}>
+                            {(this.state.templateId == 1) ? <div className={classes.FirstTemplate}>
                                 <form className={classes.Login} onSubmit={this.handleMailSubmit}>
                                     <h2>HEADER</h2>
                                     <textarea className={classes.FormInput} type="name" name="heading" value={this.state.heading} onInput={(e) => this.handleInputChanges(e, "heading")} required />
@@ -222,7 +220,7 @@ class HomePage extends React.Component {
                                     <input className={classes.FormSubmit} type="submit" value="Submit" />
                                 </form>
                             </div> :
-                                (this.state.templateId == 3) ? <div className={classes.FirstTemplate}>
+                                (this.state.templateId == 2) ? <div className={classes.FirstTemplate}>
                                     <form className={classes.Login} onSubmit={this.handleMailSubmit}>
                                         <h2>HEADER</h2>
                                         <textarea className={classes.FormInput} type="name" name="heading" value={this.state.heading} onInput={(e) => this.handleInputChanges(e, "heading")} required />
@@ -239,7 +237,7 @@ class HomePage extends React.Component {
                                         <input className={classes.FormSubmit} type="submit" value="Submit" />
                                     </form>
                                 </div> :
-                                    <div className={classes.FirstTemplate}>
+                                    (this.state.templateId == 3) ? <div className={classes.FirstTemplate}>
                                         <form className={classes.Login} onSubmit={this.handleMailSubmit}>
                                             <h2>HEADER</h2>
                                             <textarea className={classes.FormInput} type="name" name="heading" value={this.state.heading} onInput={(e) => this.handleInputChanges(e, "heading")} required />
@@ -255,99 +253,117 @@ class HomePage extends React.Component {
 
                                             <input className={classes.FormSubmit} type="submit" value="Submit" />
                                         </form>
-                                    </div>}
+                                    </div> :
+                                        <div className={classes.FirstTemplate}>
+                                            <form className={classes.Login} onSubmit={this.handleMailSubmit}>
+                                                <h2>HEADER</h2>
+                                                <textarea className={classes.FormInput} type="name" name="heading" value={this.state.heading} onInput={(e) => this.handleInputChanges(e, "heading")} required />
+                                                <h2>INSTRUCTIONS</h2>
+                                                <textarea className={classes.FormInput} type="name" name="instructions" value={this.state.instructions} onInput={(e) => this.handleInputChanges(e, "instructions")} required />
+                                                <h2>ATTENTION</h2>
+                                                <textarea className={classes.FormInput} type="name" name="attention" value={this.state.attention} onInput={(e) => this.handleInputChanges(e, "attention")} required />
+                                                <h2>MESSAGE</h2>
+                                                <textarea className={classes.FormInput} type="name" name="message" value={this.state.message} onInput={(e) => this.handleInputChanges(e, "message")} required />
+                                                <h2>FOOTER</h2>
 
-                    </div>
-                </div> : null}
-                <div className={classes.MainPage}>
-                    <div className={classes.LeftMenu}>
-                        <div className={classes.LeftMenuContainer}>
-                            {
-                                MENU_OPTIONS.map(item => {
-                                    return <MenuOptions key={item.id} id={item.id} title={item.name} active={this.props.active} />
-                                })
-                            }
+                                                <textarea className={classes.FormInput} type="name" name="footer" value={this.state.footer} onInput={(e) => this.handleInputChanges(e, "footer")} required />
+
+                                                <input className={classes.FormSubmit} type="submit" value="Submit" />
+                                            </form>
+                                        </div>}
+
                         </div>
-
-                    </div>
-
-                    <div className={classes.Content}>
-                        {this.state.fileData == [] ? <div className={classes.TopPart}>
-
-                        </div> :
-
-                            <table className={classes.TopPart}>
-                                <th>Email-ID</th>
-                                <th>Name</th>
-                                <th>Organization</th>
-                                <th>Cost</th>
-                                <th>Date</th>
-                                <th>Attachemnt</th>
-                                <th>Template</th>
-                                <th>Send</th>
+                    </div> : null}
+                    <div className={classes.MainPage}>
+                        <div className={classes.LeftMenu}>
+                            <div className={classes.LeftMenuContainer}>
                                 {
-                                    this.state.fileData.map((listValue) => {
-                                        if (listValue["Name"] !== "") {
-                                            return (
-                                                <tr >
-                                                    <td>{listValue["Email ID"]}</td>
-                                                    <td>{listValue["Name"]}</td>
-                                                    <td>{listValue["Organization Name"]}</td>
-                                                    <td>{listValue["Price (in Rupees)"]}</td>
-                                                    <td>{listValue["Date"]}</td>
-                                                    <td><input
-                                                        className={classes.ChooseFile}
-                                                        type="file"
-                                                        name="attachment"
-                                                        onChange={(e) => this.attachmentUpload(e)}
+                                    MENU_OPTIONS.map(item => {
+                                        return <MenuOptions key={item.id} id={item.id} title={item.name} active={this.props.active} switchActiveTab={this.props.switchActiveTab} />
+                                    })
+                                }
+                            </div>
 
-                                                    /></td>
-                                                    <td><select onChange={this.changeTemplate} name="template">
-                                                        <option value="">Choose a template</option>
-                                                        <option value="1">LETTER OF CONFIRMATION OF ACCOUNTS Payable</option>
-                                                        <option value="2">LETTER OF CONFIRMATION OF ACCOUNTS RECEIVABLE</option>
-                                                        <option value="3">LETTER OF CONFIRMATION OF DEPOSITS / INVESTMENTS</option>
-                                                        <option value="4">LETTER OF CONFIRMATION OF INVENTORIES HELD BY OTHERS</option>
-                                                    </select></td>
+                        </div>  
 
-                                                    <td><button onClick={() => this.sendMail(listValue["Email ID"], listValue["Price (in Rupees)"], listValue["Name"], listValue["Date"])}>Send</button></td>
-                                                </tr>
-                                            )
-                                        };
-                                    })}
+                        <div className={classes.Content}>
+                            {this.state.fileData == [] ? <div className={classes.TopPart}>
 
-                            </table>
-                        }
+                            </div> :
 
-                        <div className={classes.BottomPart}>
-                            <div className={classes.LeftBottom}>
-                                <a href={`${API_URL}api/excel/fileDownload/`} className={classes.DownTemplate}>
-                                    Download Template
+                                <table className={classes.TopPart}>
+                                    <th>Email-ID</th>
+                                    <th>Name</th>
+                                    <th>Organization</th>
+                                    <th>Cost</th>
+                                    <th>Date</th>
+                                    <th>Attachemnt</th>
+                                    <th>Template</th>
+                                    <th>Send</th>
+                                    {
+                                        this.state.fileData.map((listValue) => {
+                                            if (listValue["Name"] !== "") {
+                                                return (
+                                                    <tr >
+                                                        <td>{listValue["Email ID"]}</td>
+                                                        <td>{listValue["Name"]}</td>
+                                                        <td>{listValue["Organization Name"]}</td>
+                                                        <td>{listValue["Price (in Rupees)"]}</td>
+                                                        <td>{listValue["Date"]}</td>
+                                                        <td><input
+                                                            className={classes.ChooseFile}
+                                                            type="file"
+                                                            name="attachment"
+                                                            onChange={(e) => this.attachmentUpload(e)}
+
+                                                        /></td>
+                                                        <td><select onChange={this.changeTemplate} name="template">
+                                                            <option value="">Choose a template</option>
+                                                            <option value="1">LETTER OF CONFIRMATION OF ACCOUNTS Payable</option>
+                                                            <option value="2">LETTER OF CONFIRMATION OF ACCOUNTS RECEIVABLE</option>
+                                                            <option value="3">LETTER OF CONFIRMATION OF DEPOSITS / INVESTMENTS</option>
+                                                            <option value="4">LETTER OF CONFIRMATION OF INVENTORIES HELD BY OTHERS</option>
+                                                        </select></td>
+
+                                                        <td><button onClick={() => this.sendMail(listValue["Email ID"], listValue["Price (in Rupees)"], listValue["Name"], listValue["Date"], listValue["Organization Name"])}>Send</button></td>
+                                                    </tr>
+                                                )
+                                            };
+                                        })}
+
+                                </table>
+                            }
+
+                            <div className={classes.BottomPart}>
+                                <div className={classes.LeftBottom}>
+                                    <a href={`${API_URL}api/excel/fileDownload/`} className={classes.DownTemplate}>
+                                        Download Template
 
                             </a>
 
-                            </div>
-                            <div className={classes.RightBottom}>
-                                <div className={classes.DownTemplate}>
-                                    <input
-                                        type="file"
-                                        id="file"
-                                        ref="fileUploader"
-                                        onChange={this.filePathset.bind(this)}
-
-                                    />
-                                    {/* Upload Template */}
                                 </div>
-                            </div>
+                                <div className={classes.RightBottom}>
+                                    <div className={classes.DownTemplate}>
+                                        <input
+                                            type="file"
+                                            id="file"
+                                            ref="fileUploader"
+                                            onChange={this.filePathset.bind(this)}
 
-                            <button
-                                onClick={() => {
-                                    this.readFile();
-                                }}
-                            >
-                                Read File
+                                        />
+                                        {/* Upload Template */}
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        this.readFile();
+                                    }}
+                                >
+                                    Read File
         </button>
 
+                            </div>
                         </div>
                     </div>
                 </div>
