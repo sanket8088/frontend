@@ -37,6 +37,7 @@ class App extends React.Component {
                 : this.state.active === 4 ? <AnalyticsPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
                   : this.state.active === 5 ? <ResendPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
                     : null} />
+          <Route path="/forgotpassword/:id" render={(props) => <LoginPage />} />
           {/* <Route path="/status/" render={(props) => !(this.state.isUserLoggedIn) ? <Redirect to="/" /> : <StatusPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />} /> */}
         </Switch>
       </BrowserRouter>
