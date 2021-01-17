@@ -99,7 +99,6 @@ class LoginPage extends React.Component {
         if (data.password === data.retypepassword) {
             var gstinformat = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$')
             if (gstinformat.test(data.gst)) {
-                alert("popop")
                 let url = API_URL + "api/user/"
 
                 axios.post(url, data)
