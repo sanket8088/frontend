@@ -6,6 +6,7 @@ import HomePage from "./Container/HomePage/HomePage"
 import StatusPage from "./Container/StatusPage/StatusPage"
 import AnalyticsPage from "./Container/AnalyticsPage/AnalyticsPage"
 import ResendPage from "./Container/ResendPage/ResendPage"
+import ResetPassword from "./Container/ResetPassword/ResetPassword"
 
 class App extends React.Component {
   state = {
@@ -37,7 +38,7 @@ class App extends React.Component {
                 : this.state.active === 4 ? <AnalyticsPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
                   : this.state.active === 5 ? <ResendPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
                     : null} />
-          <Route path="/forgotpassword/:id" render={(props) => <LoginPage />} />
+          <Route path="/forgotpassword/:id" render={(props) => <ResetPassword />} />
           {/* <Route path="/status/" render={(props) => !(this.state.isUserLoggedIn) ? <Redirect to="/" /> : <StatusPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />} /> */}
         </Switch>
       </BrowserRouter>

@@ -284,7 +284,7 @@ class HomePage extends React.Component {
                                 }
                             </div>
 
-                        </div>  
+                        </div>
 
                         <div className={classes.Content}>
                             {this.state.fileData == [] ? <div className={classes.TopPart}>
