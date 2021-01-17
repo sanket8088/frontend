@@ -96,29 +96,36 @@ class LoginPage extends React.Component {
             gst: this.state.registerGst,
             contact_number: this.state.registerPhone,
         }
-
         if (data.password === data.retypepassword) {
-            let url = API_URL + "api/user/"
+            var gstinformat = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$')
+            if (gstinformat.test(data.gst)) {
+                alert("popop")
+                let url = API_URL + "api/user/"
 
-            axios.post(url, data)
-                .then(response => {
-                    console.log(response)
-                    alert("Email verification mail send on the registered mail id")
-                    this.changeToggleGrade()
+                axios.post(url, data)
+                    .then(response => {
+                        console.log(response)
+                        alert("Email verification mail send on the registered mail id")
+                        this.changeToggleGrade()
 
-                })
-                .catch(err => {
-                    alert("User already exist.")
-                    console.log(err)
-                })
+                    })
+                    .catch(err => {
+                        alert("User already exist.")
+                        console.log(err)
+                    })
 
+            }
+            else {
+                alert("Invalid GST Format")
+                return
+
+            }
         }
         else {
+
             alert("Both password does not match")
             return
         }
-
-
     }
 
     handleInputChanges = (e, name) => {
