@@ -7,6 +7,8 @@ import StatusPage from "./Container/StatusPage/StatusPage"
 import AnalyticsPage from "./Container/AnalyticsPage/AnalyticsPage"
 import ResendPage from "./Container/ResendPage/ResendPage"
 import ResetPassword from "./Container/ResetPassword/ResetPassword"
+import ProfilePage from "./Container/ProfilePage/ProfilePage"
+import ClientList from "./Container/ClientList/ClientList"
 
 class App extends React.Component {
   state = {
@@ -20,7 +22,7 @@ class App extends React.Component {
   }
 
   switchActiveTab = (activeTab) => {
-    if (activeTab === 6) {
+    if (activeTab === 7) {
       this.setState({ active: 2, isUserLoggedIn: false, userId: "" })
 
     }
@@ -34,10 +36,12 @@ class App extends React.Component {
           <Route exact path="/" render={(props) => <LoginPage onUserLogin={this.onUserLogin} {...props} />} />
           <Route path="/dashboard/" render={(props) => !(this.state.isUserLoggedIn) ? <Redirect to="/" /> :
             this.state.active === 2 ? <HomePage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} /> :
-              this.state.active === 1 ? <StatusPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
-                : this.state.active === 4 ? <AnalyticsPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
-                  : this.state.active === 5 ? <ResendPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
-                    : null} />
+              this.state.active === 1 ? <StatusPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} /> :
+                this.state.active === 3 ? <ProfilePage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} /> :
+                  this.state.active === 6 ? <ClientList userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
+                    : this.state.active === 4 ? <AnalyticsPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
+                      : this.state.active === 5 ? <ResendPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />
+                        : null} />
           <Route path="/forgotpassword/:id" render={(props) => <ResetPassword />} />
           {/* <Route path="/status/" render={(props) => !(this.state.isUserLoggedIn) ? <Redirect to="/" /> : <StatusPage userId={this.state.userId} active={this.state.active} switchActiveTab={this.switchActiveTab} {...props} />} /> */}
         </Switch>
